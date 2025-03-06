@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Trainer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200..900&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+            color: white;
+            font-size: 5vw;
+        }
+        .center-text {
+            text-align: center;
+            font-family: "Noto Serif JP", serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-text" id="input">Welcome to Keyboard Trainer</div>
+    <script>
+        document.addEventListener('keydown', reselect);
+
+        const kana = [
+            'あ', 'い', 'う', 'え', 'お',
+            'か', 'き', 'く', 'け', 'こ',
+            'さ', 'し', 'す', 'せ', 'そ',
+            'た', 'ち', 'つ', 'て', 'と',
+            'な', 'に', 'ぬ', 'ね', 'の',
+            'は', 'ひ', 'ふ', 'へ', 'ほ',
+            'ま', 'み', 'む', 'め', 'も',
+            'や', 'ゆ', 'よ',
+            'ら', 'り', 'る', 'れ', 'ろ',
+            'わ', 'を', 'ん'
+        ];
+
+        function reselect() {
+            const randomKana = kana[Math.floor(Math.random() * kana.length)];
+            document.getElementById('input').textContent = randomKana;
+        }
+
+        setTimeout(reselect, 3000);
+
+        (function(){
+            let audioCtx;
+            function initAudio(){
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            // First click to initialize audio context
+            document.body.addEventListener('click', initAudio, { once: true });
+            
+            function playBeep(){
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine';
+                gain.gain.value = 0.1;
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            }
+            
+            document.addEventListener('keydown', function(){
+                playBeep();
+                document.body.style.backgroundColor = 'hsl(' + Math.floor(Math.random() * 360) + ', 50%, 20%)';
+            });
+        })();
+    </script>
+
+</body>
+</html>
